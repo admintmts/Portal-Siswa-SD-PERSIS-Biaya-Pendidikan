@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Pengecekan Tunggakan - SD Persis Kota Serang</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 15px auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        
+        header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .login-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .login-section h2 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.9rem;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: #2a5298;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.2);
+        }
+        
+        button {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background: #1e3c72;
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .info-box {
+            background: #e8f4fc;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: left;
+            border-left: 4px solid #2a5298;
+            font-size: 0.85rem;
+        }
+        
+        .info-box h3 {
+            color: #2a5298;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .report-section {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+        
+        .report-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .report-header h2 {
+            color: #2a5298;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-card h3 {
+            color: #2a5298;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 1rem;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #eee;
+            font-size: 0.9rem;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .info-value {
+            color: #333;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+        
+        .payment-details {
+            margin-bottom: 20px;
+        }
+        
+        .payment-details h3 {
+            color: #2a5298;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eee;
+            font-size: 1rem;
+        }
+        
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .payment-table th,
+        .payment-table td {
+            padding: 10px 8px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .payment-table th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #2a5298;
+        }
+        
+        .payment-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .payment-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .amount {
+            text-align: right;
+            font-weight: 500;
+        }
+        
+        .total-section {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2a5298;
+            padding: 8px 0;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .actions button {
+            flex: 1;
+            min-width: 120px;
+            font-size: 0.9rem;
+            padding: 10px 15px;
+        }
+        
+        .btn-back {
+            background: #6c757d;
+        }
+        
+        .btn-back:hover {
+            background: #5a6268;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 15px;
+            opacity: 0.8;
+            font-size: 0.8rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            left: 15px;
+            padding: 12px 15px;
+            background: #dc3545;
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .notification.success {
+            background: #28a745;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2a5298;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Media queries untuk perangkat mobile kecil */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 10px auto;
+            }
+            
+            header {
+                padding: 12px;
+                margin-bottom: 15px;
+            }
+            
+            header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .login-section, .report-section {
+                padding: 15px;
+            }
+            
+            .login-section h2, .report-header h2 {
+                font-size: 1.2rem;
+            }
+            
+            .info-card {
+                padding: 12px;
+            }
+            
+            .payment-table {
+                font-size: 0.8rem;
+            }
+            
+            .payment-table th, 
+            .payment-table td {
+                padding: 8px 6px;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .actions button {
+                width: 100%;
+            }
+            
+            .info-item {
+                flex-direction: column;
+                gap: 4px;
+            }
+            
+            .info-value {
+                text-align: left;
+                max-width: 100%;
+            }
+        }
+        
+        /* Tampilan landscape untuk mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+            
+            header {
+                margin-bottom: 15px;
+                padding: 10px;
+            }
+            
+            .login-section, .report-section {
+                padding: 15px;
+            }
+        }
+        
+        /* Tampilan untuk tablet */
+        @media (min-width: 769px) {
+            .student-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-school"></i> SD PERSIS KOTA SERANG</h1>
+            <p>Portal Pengecekan Tunggakan Biaya Pendidikan</p>
+        </header>
+        
+        <section class="login-section">
+            <h2><i class="fas fa-lock"></i> Masuk ke Portal</h2>
+            <div class="input-group">
+                <label for="studentId">ID Siswa (Password)</label>
+                <input type="password" id="studentId" placeholder="Masukkan ID Siswa">
+            </div>
+            <button id="loginBtn">Lihat Laporan Tunggakan</button>
+            
+            <div class="info-box">
+                <h3><i class="fas fa-info-circle"></i> Informasi</h3>
+                <p>Masukkan ID Siswa yang telah diberikan oleh sekolah untuk melihat informasi tunggakan biaya pendidikan. ID Siswa bersifat rahasia dan hanya diketahui oleh orang tua/wali siswa.</p>
+            </div>
+        </section>
+        
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Memuat data tunggakan...</p>
+        </div>
+        
+        <section class="report-section" id="reportSection">
+            <div class="report-header">
+                <h2><i class="fas fa-file-invoice-dollar"></i> Laporan Tunggakan Biaya Pendidikan</h2>
+                <p>Periode Tahun Ajaran 2023/2024</p>
+            </div>
+            
+            <div class="student-info">
+                <div class="info-card">
+                    <h3><i class="fas fa-user-graduate"></i> Data Siswa</h3>
+                    <div class="info-item">
+                        <span class="info-label">ID Siswa</span>
+                        <span class="info-value" id="studentIdDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Nama Siswa</span>
+                        <span class="info-value" id="studentName">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Jenis Kelamin</span>
+                        <span class="info-value" id="studentGender">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tingkat</span>
+                        <span class="info-value" id="studentLevel">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Rombel</span>
+                        <span class="info-value" id="studentClass">-</span>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h3><i class="fas fa-info-circle"></i> Informasi</h3>
+                    <div class="info-item">
+                        <span class="info-label">Status</span>
+                        <span class="info-value" id="paymentStatus">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tahun Pelajaran</span>
+                        <span class="info-value" id="academicYear">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tanggal Pembaruan</span>
+                        <span class="info-value" id="updateDate">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-details">
+                <h3><i class="fas fa-receipt"></i> Rincian Tunggakan</h3>
+                <table class="payment-table">
+                    <thead>
+                        <tr>
+                            <th>Jenis Biaya</th>
+                            <th>Keterangan</th>
+                            <th class="amount">Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentDetails">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+                
+                <div class="total-section">
+                    <div class="total-row">
+                        <span>Total Tunggakan:</span>
+                        <span id="totalAmount">Rp 0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn-back" id="backBtn"><i class="fas fa-arrow-left"></i> Kembali</button>
+            </div>
+        </section>
+    </div>
+    
+    <div class="notification" id="notification">
+        <i class="fas fa-exclamation-circle"></i> <span id="notificationText"></span>
+    </div>
+    
+    <footer>
+        <p>© 2023 SD PERSIS KOTA SERANG - Portal Orang Tua</p>
+    </footer>
+
+    <script>
+        // Konfigurasi Google Sheets
+        const SHEET_ID = '1Jtrk7ZZ_9hsE1ingpFGM2-V8AbH0hqB4ZZ7QHYVS6mI';
+        const SHEET_NAME = 'Gabungan';
+        const SHEET_RANGE = 'A2:P';
+        const QUERY_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&range=${encodeURIComponent(SHEET_RANGE)}`;
+        
+        // Variabel global untuk data
+        let allStudentData = [];
+        let columnLabels = [];
+        
+        // Load Google Visualization API
+        google.charts.load('current', {packages:['corechart']});
+        google.charts.setOnLoadCallback(loadStudentData);
+        
+        function loadStudentData() {
+            const query = new google.visualization.Query(QUERY_SHEET_URL);
+            query.send(handleSheetResponse);
+        }
+        
+        function handleSheetResponse(response) {
+            if (response.isError()) {
+                showNotification('Gagal memuat data. Silakan coba lagi nanti.');
+                console.error('Error: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+                return;
+            }
+            
+            const dataTable = response.getDataTable();
+            allStudentData = [];
+            
+            // Simpan label kolom
+            columnLabels = [];
+            for (let c = 0; c < dataTable.getNumberOfColumns(); c++) {
+                columnLabels.push(dataTable.getColumnLabel(c));
+            }
+            
+            // Proses data siswa
+            for (let r = 0; r < dataTable.getNumberOfRows(); r++) {
+                const student = {};
+                for (let c = 0; c < dataTable.getNumberOfColumns(); c++) {
+                    const value = dataTable.getValue(r, c);
+                    student[columnLabels[c]] = value !== null && value !== undefined ? value : '';
+                }
+                allStudentData.push(student);
+            }
+            
+            console.log('Data siswa berhasil dimuat:', allStudentData.length, 'siswa');
+            console.log('Kolom yang tersedia:', columnLabels);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elemen DOM
+            const studentIdInput = document.getElementById('studentId');
+            const loginBtn = document.getElementById('loginBtn');
+            const reportSection = document.getElementById('reportSection');
+            const loginSection = document.querySelector('.login-section');
+            const loadingElement = document.querySelector('.loading');
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            const backBtn = document.getElementById('backBtn');
+            
+            // Format Rupiah
+            function formatRupiah(amount) {
+                if (!amount || isNaN(amount) || amount === 0) return 'Rp 0';
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0
+                }).format(amount);
+            }
+            
+            // Tampilkan notifikasi
+            function showNotification(message, isSuccess = false) {
+                notification.className = isSuccess ? 'notification success' : 'notification';
+                notificationText.textContent = message;
+                notification.style.display = 'block';
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Cari data siswa berdasarkan ID
+            function findStudentById(studentId) {
+                // Cek apakah data sudah dimuat
+                if (allStudentData.length === 0) {
+                    showNotification('Data belum siap. Silakan tunggu sebentar dan coba lagi.');
+                    return null;
+                }
+                
+                // Cari siswa dengan ID yang cocok (kolom B)
+                for (let i = 0; i < allStudentData.length; i++) {
+                    const student = allStudentData[i];
+                    // Cari berdasarkan kolom B (ID Siswa)
+                    if (student[columnLabels[1]] && student[columnLabels[1]].toString() === studentId) {
+                        return student;
+                    }
+                }
+                
+                return null;
+            }
+            
+            // Tampilkan laporan siswa
+            function showStudentReport(student) {
+                // Update informasi siswa
+                document.getElementById('studentIdDisplay').textContent = student[columnLabels[1]] || '-';
+                document.getElementById('studentName').textContent = student[columnLabels[2]] || '-';
+                document.getElementById('studentGender').textContent = student[columnLabels[3]] || '-';
+                document.getElementById('studentLevel').textContent = student[columnLabels[4]] || '-';
+                document.getElementById('studentClass').textContent = student[columnLabels[5]] || '-';
+                document.getElementById('academicYear').textContent = student[columnLabels[7]] || '-';
+                document.getElementById('updateDate').textContent = new Date().toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Tentukan status pembayaran
+                const totalTunggakan = calculateTotalTunggakan(student);
+                const statusElement = document.getElementById('paymentStatus');
+                statusElement.textContent = totalTunggakan > 0 ? 'Menunggak' : 'Lunas';
+                statusElement.style.color = totalTunggakan > 0 ? '#dc3545' : '#28a745';
+                
+                // Tampilkan rincian tunggakan
+                const paymentDetails = document.getElementById('paymentDetails');
+                paymentDetails.innerHTML = '';
+                
+                // Daftar kolom yang berisi informasi pembayaran (kolom I sampai O)
+                const paymentColumns = columnLabels.slice(8, 15);
+                
+                let hasTunggakan = false;
+                
+                paymentColumns.forEach(column => {
+                    if (student[column] && !isNaN(student[column]) && Number(student[column]) > 0) {
+                        hasTunggakan = true;
+                        const row = document.createElement('tr');
+                        
+                        row.innerHTML = `
+                            <td>${column}</td>
+                            <td>${column}</td>
+                            <td class="amount">${formatRupiah(Number(student[column]))}</td>
+                        `;
+                        
+                        paymentDetails.appendChild(row);
+                    }
+                });
+                
+                // Jika tidak ada tunggakan
+                if (!hasTunggakan) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td colspan="3" style="text-align: center; padding: 20px;">
+                            <i class="fas fa-check-circle" style="color: #28a745; font-size: 24px; display: block; margin-bottom: 10px;"></i>
+                            Tidak ada tunggakan pembayaran
+                        </td>
+                    `;
+                    paymentDetails.appendChild(row);
+                }
+                
+                // Update total tunggakan
+                document.getElementById('totalAmount').textContent = formatRupiah(totalTunggakan);
+                
+                // Tampilkan laporan
+                loadingElement.style.display = 'none';
+                reportSection.style.display = 'block';
+                loginSection.style.display = 'none';
+            }
+            
+            // Hitung total tunggakan
+            function calculateTotalTunggakan(student) {
+                let total = 0;
+                
+                // Kolom yang berisi informasi pembayaran (kolom I sampai O)
+                const paymentColumns = columnLabels.slice(8, 15);
+                
+                paymentColumns.forEach(column => {
+                    if (student[column] && !isNaN(student[column])) {
+                        total += Number(student[column]);
+                    }
+                });
+                
+                return total;
+            }
+            
+            // Event listener untuk tombol login
+            loginBtn.addEventListener('click', function() {
+                const studentId = studentIdInput.value.trim();
+                
+                if (!studentId) {
+                    showNotification('Harap masukkan ID Siswa');
+                    return;
+                }
+                
+                // Tampilkan loading
+                loadingElement.style.display = 'block';
+                loginSection.style.display = 'none';
+                reportSection.style.display = 'none';
+                
+                // Tunggu sebentar untuk memastikan data sudah dimuat
+                setTimeout(() => {
+                    const student = findStudentById(studentId);
+                    
+                    if (student) {
+                        showStudentReport(student);
+                        showNotification('Data siswa berhasil ditemukan', true);
+                    } else {
+                        loadingElement.style.display = 'none';
+                        loginSection.style.display = 'block';
+                        showNotification('ID Siswa tidak ditemukan. Harap periksa kembali.');
+                    }
+                }, 500);
+            });
+            
+            // Event listener untuk tombol kembali
+            backBtn.addEventListener('click', function() {
+                reportSection.style.display = 'none';
+                loginSection.style.display = 'block';
+                studentIdInput.value = '';
+            });
+            
+            // Event listener untuk tekan Enter di input field
+            studentIdInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

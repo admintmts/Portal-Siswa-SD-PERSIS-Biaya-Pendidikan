@@ -251,6 +251,14 @@
             font-weight: 500;
         }
         
+        .paid {
+            color: #28a745;
+        }
+        
+        .unpaid {
+            color: #dc3545;
+        }
+        
         .total-section {
             background: #f1f5f9;
             padding: 15px;
@@ -332,6 +340,7 @@
             display: none;
             text-align: center;
             margin: 15px 0;
+            padding: 20px;
         }
         
         .loading-spinner {
@@ -345,8 +354,8 @@
         }
         
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         /* Media queries untuk perangkat mobile kecil */
@@ -507,13 +516,13 @@
             </div>
             
             <div class="payment-details">
-                <h3><i class="fas fa-receipt"></i> Rincian Tunggakan</h3>
+                <h3><i class="fas fa-receipt"></i> Rincian Biaya</h3>
                 <table class="payment-table">
                     <thead>
                         <tr>
                             <th>Jenis Biaya</th>
-                            <th>Keterangan</th>
                             <th class="amount">Jumlah</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="paymentDetails">
@@ -645,6 +654,32 @@
                 return null;
             }
             
+            // Dapatkan kolom yang harus ditampilkan berdasarkan tingkat
+            function getColumnsToDisplay(level) {
+                // Normalisasi nilai level (ambil hanya angka pertama)
+                const levelValue = level.toString();
+                const levelNum = parseInt(levelValue.charAt(0));
+                
+                // Jika level adalah 1 atau 1* (dengan wildcard)
+                if (levelNum === 1) {
+                    // Untuk tingkat 1: tampilkan kolom I, K (tidak termasuk P)
+                    return [columnLabels[8], columnLabels[10]];
+                } 
+                // Jika level adalah 2,3,4,5 atau 2*,3*,4*,5* (dengan wildcard)
+                else if (levelNum >= 2 && levelNum <= 5) {
+                    // Untuk tingkat 2-5: tampilkan kolom I, J, K, L, M (tidak termasuk P)
+                    return [columnLabels[8], columnLabels[9], columnLabels[10], columnLabels[11], columnLabels[12]];
+                } 
+                // Jika level adalah 6 atau 6* (dengan wildcard)
+                else if (levelNum === 6) {
+                    // Untuk tingkat 6: tampilkan semua kolom I sampai O (tidak termasuk P)
+                    return columnLabels.slice(8, 15);
+                } else {
+                    // Default: tampilkan semua kolom kecuali P
+                    return columnLabels.slice(8, 15);
+                }
+            }
+            
             // Tampilkan laporan siswa
             function showStudentReport(student) {
                 // Update informasi siswa
@@ -667,44 +702,36 @@
                 statusElement.textContent = totalTunggakan > 0 ? 'Menunggak' : 'Lunas';
                 statusElement.style.color = totalTunggakan > 0 ? '#dc3545' : '#28a745';
                 
-                // Tampilkan rincian tunggakan
+                // Tampilkan rincian biaya
                 const paymentDetails = document.getElementById('paymentDetails');
                 paymentDetails.innerHTML = '';
                 
-                // Daftar kolom yang berisi informasi pembayaran (kolom I sampai O)
-                const paymentColumns = columnLabels.slice(8, 15);
+                // Dapatkan kolom yang harus ditampilkan berdasarkan tingkat
+                const columnsToDisplay = getColumnsToDisplay(student[columnLabels[4]]);
                 
-                let hasTunggakan = false;
+                let totalTunggakanDisplay = 0;
                 
-                paymentColumns.forEach(column => {
-                    if (student[column] && !isNaN(student[column]) && Number(student[column]) > 0) {
-                        hasTunggakan = true;
-                        const row = document.createElement('tr');
-                        
-                        row.innerHTML = `
-                            <td>${column}</td>
-                            <td>${column}</td>
-                            <td class="amount">${formatRupiah(Number(student[column]))}</td>
-                        `;
-                        
-                        paymentDetails.appendChild(row);
+                columnsToDisplay.forEach(column => {
+                    const amount = student[column] && !isNaN(student[column]) ? Number(student[column]) : 0;
+                    const isPaid = amount === 0;
+                    
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${column}</td>
+                        <td class="amount">${formatRupiah(amount)}</td>
+                        <td class="${isPaid ? 'paid' : 'unpaid'}">${isPaid ? 'Lunas' : 'Belum Lunas'}</td>
+                    `;
+                    
+                    paymentDetails.appendChild(row);
+                    
+                    if (!isPaid) {
+                        totalTunggakanDisplay += amount;
                     }
                 });
                 
-                // Jika tidak ada tunggakan
-                if (!hasTunggakan) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td colspan="3" style="text-align: center; padding: 20px;">
-                            <i class="fas fa-check-circle" style="color: #28a745; font-size: 24px; display: block; margin-bottom: 10px;"></i>
-                            Tidak ada tunggakan pembayaran
-                        </td>
-                    `;
-                    paymentDetails.appendChild(row);
-                }
-                
                 // Update total tunggakan
-                document.getElementById('totalAmount').textContent = formatRupiah(totalTunggakan);
+                document.getElementById('totalAmount').textContent = formatRupiah(totalTunggakanDisplay);
                 
                 // Tampilkan laporan
                 loadingElement.style.display = 'none';
@@ -716,11 +743,11 @@
             function calculateTotalTunggakan(student) {
                 let total = 0;
                 
-                // Kolom yang berisi informasi pembayaran (kolom I sampai O)
-                const paymentColumns = columnLabels.slice(8, 15);
+                // Dapatkan kolom yang harus ditampilkan berdasarkan tingkat
+                const columnsToDisplay = getColumnsToDisplay(student[columnLabels[4]]);
                 
-                paymentColumns.forEach(column => {
-                    if (student[column] && !isNaN(student[column])) {
+                columnsToDisplay.forEach(column => {
+                    if (student[column] && !isNaN(student[column]) && Number(student[column]) > 0) {
                         total += Number(student[column]);
                     }
                 });

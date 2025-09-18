@@ -559,13 +559,39 @@
         const SHEET_RANGE = 'A2:P';
         const QUERY_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_NAME)}&range=${encodeURIComponent(SHEET_RANGE)}`;
         
+        // URL untuk mengambil data dari sheet "Tagihan"
+        const TAGIHAN_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Tagihan&range=G1`;
+        
         // Variabel global untuk data
         let allStudentData = [];
         let columnLabels = [];
+        let showColumnNO = false; // Variabel untuk menentukan apakah kolom N dan O ditampilkan
         
         // Load Google Visualization API
         google.charts.load('current', {packages:['corechart']});
-        google.charts.setOnLoadCallback(loadStudentData);
+        google.charts.setOnLoadCallback(loadSettingsAndData);
+        
+        function loadSettingsAndData() {
+            // Pertama, ambil pengaturan dari sheet "Tagihan"
+            const tagihanQuery = new google.visualization.Query(TAGIHAN_SHEET_URL);
+            tagihanQuery.send(function(response) {
+                if (response.isError()) {
+                    console.error('Error mengambil data dari sheet Tagihan:', response.getMessage());
+                    // Default: sembunyikan kolom N dan O jika terjadi error
+                    showColumnNO = false;
+                } else {
+                    const dataTable = response.getDataTable();
+                    // Ambil nilai dari sel G1
+                    const tagihanSetting = dataTable.getValue(0, 0);
+                    // Tentukan apakah kolom N dan O harus ditampilkan
+                    showColumnNO = (tagihanSetting && tagihanSetting.toString().toUpperCase() === 'YA');
+                    console.log('Pengaturan tampilkan kolom N dan O:', showColumnNO);
+                }
+                
+                // Setelah itu, baru muat data siswa
+                loadStudentData();
+            });
+        }
         
         function loadStudentData() {
             const query = new google.visualization.Query(QUERY_SHEET_URL);
@@ -680,6 +706,19 @@
                 }
             }
             
+            // Filter kolom berdasarkan pengaturan dari sheet "Tagihan"
+            function filterColumnsBasedOnSettings(columns) {
+                if (!showColumnNO) {
+                    // Jika pengaturan adalah "TIDAK", hapus kolom N dan O
+                    // Kolom N adalah index 13, O adalah index 14 (0-based index)
+                    return columns.filter(col => {
+                        const colIndex = columnLabels.indexOf(col);
+                        return colIndex !== 13 && colIndex !== 14;
+                    });
+                }
+                return columns;
+            }
+            
             // Tampilkan laporan siswa
             function showStudentReport(student) {
                 // Update informasi siswa
@@ -707,7 +746,10 @@
                 paymentDetails.innerHTML = '';
                 
                 // Dapatkan kolom yang harus ditampilkan berdasarkan tingkat
-                const columnsToDisplay = getColumnsToDisplay(student[columnLabels[4]]);
+                let columnsToDisplay = getColumnsToDisplay(student[columnLabels[4]]);
+                
+                // Filter kolom berdasarkan pengaturan dari sheet "Tagihan"
+                columnsToDisplay = filterColumnsBasedOnSettings(columnsToDisplay);
                 
                 let totalTunggakanDisplay = 0;
                 
@@ -744,7 +786,10 @@
                 let total = 0;
                 
                 // Dapatkan kolom yang harus ditampilkan berdasarkan tingkat
-                const columnsToDisplay = getColumnsToDisplay(student[columnLabels[4]]);
+                let columnsToDisplay = getColumnsToDisplay(student[columnLabels[4]]);
+                
+                // Filter kolom berdasarkan pengaturan dari sheet "Tagihan"
+                columnsToDisplay = filterColumnsBasedOnSettings(columnsToDisplay);
                 
                 columnsToDisplay.forEach(column => {
                     if (student[column] && !isNaN(student[column]) && Number(student[column]) > 0) {
